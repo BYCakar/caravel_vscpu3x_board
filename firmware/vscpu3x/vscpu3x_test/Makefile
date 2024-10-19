@@ -9,6 +9,9 @@ TOOLCHAIN_PATH=/opt/riscv/bin/
 TOOLCHAIN_PREFIX=riscv64-unknown-elf
 #TOOLCHAIN_PREFIX=riscv32
 
+#ARCH=rv32i
+ARCH=rv32i_zicsr
+
 # ---- Test patterns for project raven ----
 
 .SUFFIXES:
@@ -19,7 +22,7 @@ hex:  ${PATTERN:=.hex}
 
 %.elf: %.c ../sections.lds ../crt0_vex.S
 	#$(TOOLCHAIN_PATH)riscv32-unknown-elf-gcc -O0 -march=rv32i -Wl,-Bstatic,-T,../sections.lds,--strip-debug -ffreestanding -nostdlib -o $@ ../start.s ../print_io.c $<
-	$(TOOLCHAIN_PATH)$(TOOLCHAIN_PREFIX)-gcc -I../ -I../generated/ -O0 -mabi=ilp32 -march=rv32i_zicsr -D__vexriscv__ -Wl,-Bstatic,-T,../sections.lds,--strip-debug -ffreestanding -nostdlib -o $@ ../crt0_vex.S ../isr.c ../stub.c $<
+	$(TOOLCHAIN_PATH)$(TOOLCHAIN_PREFIX)-gcc -I../ -I../generated/ -O0 -mabi=ilp32 -march=$(ARCH) -D__vexriscv__ -Wl,-Bstatic,-T,../sections.lds,--strip-debug -ffreestanding -nostdlib -o $@ ../crt0_vex.S ../isr.c ../stub.c $<
 	${TOOLCHAIN_PATH}$(TOOLCHAIN_PREFIX)-objdump -D vscpu3x_test.elf > vscpu3x_test.lst
 
 %.hex: %.elf
@@ -41,7 +44,7 @@ flash2: vscpu3x_test.hex
 # ---- Clean ----
 
 clean:
-	rm -f *.elf *.hex *.bin *.vvp *.vcd
+	rm -f *.elf *.hex *.bin *.vvp *.vcd *.lst
 
 .PHONY: clean hex all flash
 
