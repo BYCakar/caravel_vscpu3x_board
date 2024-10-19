@@ -44,7 +44,7 @@ flash2: vscpu3x_test.hex
 # ---- Clean ----
 
 clean:
-	rm -f *.elf *.hex *.bin *.vvp *.vcd
+	rm -f *.elf *.hex *.bin *.vvp *.vcd *.lst
 
 .PHONY: clean hex all flash
 
