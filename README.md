@@ -1,15 +1,8 @@
-# Caravel Board
+# Caravel VSCPU3x Board
 
-This repo provides firmware examples, flash programming and diagnostic tools for testing
-Open MPW and chipIgnite projects using Caravel.  It also provides schematics, layout and gerber files for PCB evaluation and breakout boards.
+This repo is a customized version of Caravel Board repo that provides examples for VSCPU3x.
 
-## MPW-2 & MPW-3 Project Owners
-
-See the README for the the Nucleo automated test setup here -- https://bit.ly/3KPriWb
-
-## chipIgnite Projects (including Stanford)
-
-See the  README for testing projects here -- https://github.com/efabless/caravel_board/tree/main/firmware/chipignite#readme
+Refer to [quickstart guide](vscpu3x_docs/Quickstart.md) for an example test environment.
 
 ## Firmware
 
@@ -17,10 +10,12 @@ You will need python 3.6 or later.
 
 To program Caravel, connect the evaluation board using a USB micro B connector.
 
+Please make sure that you set the variables `TOOLCHAIN_PATH`, `TOOLCHAIN_PREFIX`, `ARCH` properly in the makefile, according to your RISC-V toolchain environment. 
+
 ```bash
 pip3 install pyftdi
 
-cd firmware/blink
+cd firmware/vscpu3x/vscpu3x_test
 
 make clean flash
 ```
@@ -34,6 +29,8 @@ https://github.com/riscv/homebrew-riscv
 #### For Linux
 
 https://github.com/riscv/riscv-gnu-toolchain
+
+Or just check [installation notes](vscpu3x_docs/Installation.md) for easier installation!
 
 ### Diagnostics
 
