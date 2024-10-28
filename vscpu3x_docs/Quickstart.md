@@ -46,3 +46,13 @@ With these naming, explanation of the files that you might find in the test fold
 - `<test_name>_<processor_name>.mem`: VSCPU memory file for writing into core memories.
 - `<test_name>_<processor_name>_chk.mem`: VSCPU check file for checking memory after the program has run.
 
+If you have asm files to convert into mem files, please run asmtomem.py as instructed below
+
+```bash
+cd vscpu3x_apps/utils
+
+# Usage: 
+#   asm_file: Assembly file name, e.g. ../knightrider/knightrider_cm.asm.
+#             Make sure you have written file path properly, and it is a .asm file, otherwise it will complain.
+python3 asmtomem.py <asm_file>
+```
