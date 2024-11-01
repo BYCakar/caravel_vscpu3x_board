@@ -3,7 +3,7 @@
 
 To install RISC-V toolchain, download [xpack-riscv-none-elf-gcc-12.2.0-3](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/tag/v12.2.0-3/) and extract it in a proper directory in your system. 
 
-Then the only thing you need to do is change two variables in the makefile that you are going to use.
+Then the only thing you need to do is change two variables in the makefile, the one in `firmware/vscpu3x/vscpu3x_test`, that you are going to use.
 
 ```Makefile
 TOOLCHAIN_PATH=/path/to/your/xpack-riscv-none-elf-gcc-12.2.0-3/bin/
