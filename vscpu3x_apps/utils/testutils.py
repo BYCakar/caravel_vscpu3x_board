@@ -90,8 +90,8 @@ class uart:
                     # Write the previous memory block to the target address
                     self.WriteMemory(start_address, memory_data)
                 
-                # Get the new start address, removing the '@' symbol
-                start_address = int(line[1:])
+                # Verilog memory address markers are hexadecimal.
+                start_address = int(line[1:], 16)
                 memory_data = []
             else:
                 # Split the data line into individual words
@@ -125,8 +125,8 @@ class uart:
                             print(f"Mismatch at address {start_address+i}! Expected: {expected}, Actual: {actual}")
                             mismatch_count += 1
 
-                # Get the new start address, removing the '@' symbol and converting to integer
-                start_address = int(line[1:])
+                # Verilog memory address markers are hexadecimal.
+                start_address = int(line[1:], 16)
                 expected_memory = []
             else:
                 # Split the data line into individual words

@@ -17,7 +17,7 @@
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
-// #include <stub.c>
+// #include <stub.h>
 
 /*
 	Wishbone Test:
@@ -38,7 +38,42 @@ void delay(const int d)
    while (reg_timer0_value > 0) {
            reg_timer0_update = 1;
    }
+}
 
+
+static void led_init(void)
+{
+    reg_gpio_mode1 = 1;
+    reg_gpio_mode0 = 0;
+    reg_gpio_ien   = 1;
+    reg_gpio_oe    = 1;
+
+    reg_gpio_out = 1;   // LED OFF (active-low)
+}
+
+static void pll_24mhz(void)
+{
+    reg_hkspi_pll_bypass = 1;
+    reg_hkspi_pll_ena = 0;
+
+    /*
+     * Internal FLL target:
+     * 10 MHz * 12 = 120 MHz
+     *
+     * Output:
+     * 120 MHz / 5 = 24 MHz
+     */
+
+    reg_hkspi_pll_source = 0x12;   // (5 << 3) | 5
+    reg_hkspi_pll_divider = 5;    // x12 -> 120 MHz
+
+    reg_hkspi_pll_trim = 0x3ffffff;
+
+    reg_hkspi_pll_ena = 1;
+
+    for (volatile unsigned int i = 0; i < 100000; i++);
+
+    reg_hkspi_pll_bypass = 0;
 }
 
 void main()
@@ -61,7 +96,11 @@ void main()
 	/* Set up the housekeeping SPI to be connected internally so	*/
 	/* that external pin changes don't affect it.			*/
 
-    uint32_t gpio_data, gpio_data_prev;
+    // Led blink and pll configuration functions, unused by now
+    // led_init();
+    // pll_24mhz();
+
+    uint32_t gpio_data;
 
     reg_spi_enable = 1;
     reg_wb_enable = 1;
@@ -72,6 +111,7 @@ void main()
 	// so that the CSB line is not left floating.  This allows
 	// all of the GPIO pins to be used for user functions.
 
+    reg_mprj_io_5   = GPIO_MODE_MGMT_STD_INPUT_NOPULL;
     reg_mprj_io_6   = GPIO_MODE_MGMT_STD_INPUT_NOPULL;
     reg_mprj_io_7   = GPIO_MODE_MGMT_STD_INPUT_NOPULL;
     reg_mprj_io_8   = GPIO_MODE_MGMT_STD_BIDIRECTIONAL;
@@ -113,16 +153,22 @@ void main()
 	reg_la0_oenb = reg_la0_iena = 0xFFFFFFFF;    // [31:0]
 	
 	// Set UART clock divisor value to 11 through LA probes (BaudRate: 57600)
-	reg_la0_data = 0x0000000B;
-	
-    while(1){
-        // Read pins 7:6 and write them to pins 26:25 to debounce program pins
-        gpio_data_prev = gpio_data & 0x00000600;
-        gpio_data = (reg_mprj_datal & 0x000000C0) << 3; 
-        delay(1000000); // Wait for 500ms
-        // Pulse reset at the beginning and the end of programming mode
-        gpio_data |= ((!gpio_data_prev && gpio_data) || (gpio_data_prev && !gpio_data))  ? 0x0 : 0x100;
-        reg_mprj_datal = gpio_data; 
-        delay(1000000); // Wait for 500ms
+	reg_la0_data = 11;
+
+    // LED monitoring is not used by now
+    // while(1){ // You can track internal clock speed on the board LED. One period of the led will be 100/CORE_CLOCK_MHZ seconds
+    //     reg_gpio_out = 1; // OFF
+    //     // reg_mprj_datal ^= 0x0F000000; 
+    //     delay(50000000); // Wait for 50M cycles
+    //     reg_gpio_out = 0; // OFF
+    //     // reg_mprj_datal ^= 0x0F000000; 
+    //     delay(50000000); // Wait for 50M cycles
+    // }
+
+    while (1){ // Synchronize program and reset bits
+        gpio_data = (reg_mprj_datal & 0x000000E0) << 3; 
+        reg_mprj_datal = gpio_data;
     }
+	
+    return;
 }
