@@ -125,7 +125,6 @@ with a manually configured trim value.
 On our tested hardware, the oscillator frequency saturates at approximately
 **96 MHz** in both FLL and DCO modes. We have observed operation in the
 **50–80 MHz** range, but have **not yet measured the lower frequency limit**.
-These are board observations, not a fully characterized operating range.
 
 Reference ranges vary: the
 [Caravel documentation](https://caravel-harness.readthedocs.io/en/latest/housekeeping-spi.html#housekeeping-spi-registers)
